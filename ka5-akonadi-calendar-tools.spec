@@ -1,29 +1,31 @@
-%define		kdeappsver	18.12.0
+%define		kdeappsver	19.04.1
+%define		kframever	5.56.0
 %define		qtver		5.9.0
 %define		kaname		akonadi-calendar-tools
 Summary:	Akonadi Calendar Tools
 Name:		ka5-%{kaname}
-Version:	18.12.0
+Version:	19.04.1
 Release:	1
 License:	GPL v2+/LGPL v2.1+
 Group:		X11/Libraries
 Source0:	http://download.kde.org/stable/applications/%{kdeappsver}/src/%{kaname}-%{version}.tar.xz
-# Source0-md5:	a59425e38bcd91461e093a41ffd44ed0
+# Source0-md5:	3732d02b1475f642c46d6cb0d4f2b5cf
 URL:		http://www.kde.org/
 BuildRequires:	Qt5Core-devel >= %{qtver}
 BuildRequires:	Qt5Gui-devel >= 5.11.1
 BuildRequires:	Qt5Widgets-devel
 BuildRequires:	cmake >= 2.8.12
 BuildRequires:	gettext-devel
-BuildRequires:	ka5-akonadi-calendar-devel >= 18.12.0
-BuildRequires:	ka5-akonadi-devel >= 18.12.0
-BuildRequires:	ka5-calendarsupport-devel >= 18.12.0
-BuildRequires:	ka5-kcalcore-devel >= 18.12.0
-BuildRequires:	ka5-kcalutils-devel
-BuildRequires:	ka5-libkdepim-devel >= 18.12.0
-BuildRequires:	kf5-extra-cmake-modules >= 5.51.0
-BuildRequires:	kf5-kdelibs4support-devel >= 5.53.0
-BuildRequires:	kf5-kdoctools-devel >= 5.53.0
+BuildRequires:	ka5-akonadi-calendar-devel >= %{kdeappsver}
+BuildRequires:	ka5-akonadi-devel >= %{kdeappsver}
+BuildRequires:	ka5-calendarsupport-devel >= %{kdeappsver}
+BuildRequires:	ka5-kcalcore-devel >= %{kdeappsver}
+BuildRequires:	ka5-kcalutils-devel >= %{kdeappsver}
+BuildRequires:	ka5-libkdepim-devel >= %{kdeappsver}
+BuildRequires:	kf5-extra-cmake-modules >= %{kframever}
+BuildRequires:	kf5-kdelibs4support-devel >= %{kframever}
+BuildRequires:	kf5-kdoctools-devel >= %{kframever}
+BuildRequires:	ninja
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -37,15 +39,15 @@ Console applications and utilities for managing calendars in Akonadi.
 %build
 install -d build
 cd build
-%cmake \
+%cmake -G Ninja \
+	-DHTML_INSTALL_DIR=%{_kdedocdir} \
 	-DKDE_INSTALL_USE_QT_SYS_PATHS=ON \
 	..
-%{__make}
+%ninja_build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} -C build install \
-	DESTDIR=$RPM_BUILD_ROOT
+%ninja_install -C build
 
 %find_lang %{kaname} --all-name --with-kde
 
